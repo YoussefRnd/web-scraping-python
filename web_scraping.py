@@ -23,6 +23,10 @@ def main(page):
             # get teams scores
             results = all_matches[i].find("div", {'class':'MResult'}).find_all("span",{'class':'score'})
             score = f"{results[0].text.strip()} - {results[1].text.strip()}"
-            print(team_a, team_b , score)
-    get_match_data(championships[0])
+            # get match time
+            match_time = all_matches[i].find("div", {'class':'MResult'}).find("span", {'class':'time'}).text.strip()
+            # add all data to match_date list
+            match_date.append({"Championship": championship_tile, "Team A": team_a, "Team B": team_b, "Time": match_time, "Score": score})
+    for i in range(len(championships)):
+        get_match_data(championships[i])
 main(page)
