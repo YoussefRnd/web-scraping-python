@@ -1,10 +1,12 @@
+"""This script will get the data from the website and save it in a csv file"""
+
 import csv
 
 import requests
 from bs4 import BeautifulSoup
 
 date = input("Enter date: ")
-page = requests.get(f"https://www.yallakora.com/match-center/%D9%85%D8%B1%D9%83%D8%B2-%D8%A7%D9%84%D9%85%D8%A8%D8%A7%D8%B1%D9%8A%D8%A7%D8%AA?date={date}#days")
+page = requests.get(f"https://www.yallakora.com/match-center/%D9%85%D8%B1%D9%83%D8%B2-%D8%A7%D9%84%D9%85%D8%A8%D8%A7%D8%B1%D9%8A%D8%A7%D8%AA?date={date}#days", timeout=3)
 def main(page):
     """This function will get the data from the website and save it in a csv file"""
     src = page.content
@@ -20,13 +22,15 @@ def main(page):
             # get teams names
             team_a = all_matches[i].find("div", {'class':'teamA'}).text.strip()
             team_b = all_matches[i].find("div", {'class':'teamB'}).text.strip()
+            # get match_status
+            match_status = all_matches[i].find("div", {'class':'matchStatus'}).find("span", {'class':'status'}).text.strip()
             # get teams scores
             results = all_matches[i].find("div", {'class':'MResult'}).find_all("span",{'class':'score'})
             score = f"{results[0].text.strip()} - {results[1].text.strip()}"
             # get match time
             match_time = all_matches[i].find("div", {'class':'MResult'}).find("span", {'class':'time'}).text.strip()
             # add all data to match_date list
-            match_data.append({"Championship": championship_tile, "Team A": team_a, "Team B": team_b, "Time": match_time, "Score": score})
+            match_data.append({"Championship": championship_tile, "Team A": team_a, "Team B": team_b, "Time": match_time, "Score": score, "Status": match_status})
     for i in range(len(championships)):
         get_match_data(championships[i])
     # save data in csv file
