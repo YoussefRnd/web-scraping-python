@@ -9,7 +9,7 @@ def main(page):
     """This function will get the data from the website and save it in a csv file"""
     src = page.content
     soup = BeautifulSoup(src, "lxml")
-    match_date = []
+    match_data = []
     championships = soup.find_all("div", {'class':'matchCard'})
     def get_match_data(championships):
         """This function will get the match data"""
@@ -26,7 +26,14 @@ def main(page):
             # get match time
             match_time = all_matches[i].find("div", {'class':'MResult'}).find("span", {'class':'time'}).text.strip()
             # add all data to match_date list
-            match_date.append({"Championship": championship_tile, "Team A": team_a, "Team B": team_b, "Time": match_time, "Score": score})
+            match_data.append({"Championship": championship_tile, "Team A": team_a, "Team B": team_b, "Time": match_time, "Score": score})
     for i in range(len(championships)):
         get_match_data(championships[i])
+    # save data in csv file
+    keys = match_data[0].keys()
+    with open("C:/Users/bouml/Downloads/matches.csv", "w", encoding="utf-8") as output_file:
+        dict_writer = csv.DictWriter(output_file, keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(match_data)
+        print("======file created successfully======")
 main(page)
